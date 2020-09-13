@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Public Verdict</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  </head>
+  <body>
+    <nav class="blue darken-1">
+      <div class="container">
+        <div class="nav-wrapper ">
+          <a href="#" class="brand-logo">Public Verdict</a>
+          <ul id="nav-mobile" class="right hide-on-med-and-down">
+            <li><a href="/">Vote On a Poll</a></li>
+            <li><a href="/verdict/search">Find Poll</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container">
+      <div class="row card">
+            <form class="col s12 m8 push-m2 " id="create_poll_form">
+              <div class="row center">
+                <div class="">
+                  <h3>Create Your Poll</h3>
+                </div>
+              </div>
+              <div class="row">
+                <div class="input-field col s12">
+                  <i class="material-icons prefix">title</i>
+                  <input id="issue_heading" name="issue_heading" type="text" class="validate" required>
+                  <label for="issue_heading">Issue Heading</label>
+                </div>
+              </div>
+              <div class="row">
+                <div class="input-field col s12">
+                  <i class="material-icons prefix">subject</i>
+                  <textarea id="issue_description" name="issue_description" class="materialize-textarea" required></textarea>
+                  <label for="issue_description">Issue Description</label>
+                </div>
+              </div>
+              <div class="row">
+                <div class="input-field col s12">
+                  <i class="material-icons prefix">looks_one</i>
+                  <input id="option_1" type="text" name="option_1" class="validate" required>
+                  <label for="option_1">Option 1</label>
+                </div>
+              </div>
+              <div class="row">
+                <div class="input-field col s12">
+                  <i class="material-icons prefix">looks_two</i>
+                  <input id="option_2" type="text" name="option_2" class="validate" required>
+                  <label for="option_2">Option 2</label>
+                </div>
+              </div>
+              <div class="row center">
+                <button class="btn blue " type="submit" name="action">Create Poll
+                  <i class="material-icons left ">add</i>
+                </button>
+                <h6 class="red-text" id="create_poll_error_message" style="display:none;">There was some error while creating the poll. Please try after sometime</h6>
+              </div>
+
+            </form>
+      </div>
+    </div>
+  </body>
+</html>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script>
+
+//To add Poll to database
+const $form = $('#create_poll_form')
+
+$form.on('submit', submitHandler)
+
+function submitHandler (e) {
+  e.preventDefault()
+
+  $.ajax({
+    url: '/submitPoll',
+    type:'POST',
+    dataType: "text",
+    data: $form.serialize()
+  }).done(response => {
+    if(response == "error"){
+      document.getElementById('create_poll_error_message').style.display = 'block';
+    }else {
+      document.getElementById('create_poll_error_message').innerHTML = "<a href='/"+response+"'>Link to Created Poll</a>";
+      document.getElementById('create_poll_error_message').style.display = 'block';
+    }
+  });
+}
+</script>

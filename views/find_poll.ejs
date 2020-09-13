@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Public Verdict</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+    ::placeholder {
+      color: white;
+      opacity: 1; /* Firefox */
+    }
+
+    :-ms-input-placeholder { /* Internet Explorer 10-11 */
+     color: white;
+    }
+
+    ::-ms-input-placeholder { /* Microsoft Edge */
+     color: white;
+    }
+    </style>
+  </head>
+  <body>
+    <nav class="blue darken-1">
+      <div class="container">
+        <div class="nav-wrapper ">
+          <a href="#" class="brand-logo">Public Verdict</a>
+          <ul id="nav-mobile" class="right hide-on-med-and-down">
+            <li><a href="http://localhost:3000">Vote On a Poll</a></li>
+            <li><a href="/verdict/create">Create Poll</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="center ">
+
+      <nav class="blue lighten-1  z-depth-0">
+        <div class="nav-wrapper  ">
+          <form id="search_form">
+            <div class="input-field ">
+              <input id="search" type="search" name="search_word" required placeholder="Search Using Keyword" required>
+              <label class="label-icon" for="search"><i class="material-icons">search</i></label>
+              <i class="material-icons">close</i>
+            </div>
+          </form>
+        </div>
+      </nav>
+      <p id="search_poll_error_message"></p>
+    </div>
+
+    <div class="container">
+      <div class="row" id="search_results">
+
+      </div>
+    </div>
+  </body>
+</html>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script>
+
+// To Search a particular poll by Keyword
+const $form = $('#search_form')
+
+$form.on('submit', submitHandler)
+
+function submitHandler (e) {
+  e.preventDefault()
+
+  $.ajax({
+    url: '/searchPoll',
+    type:'POST',
+    dataType: "text",
+    data: $form.serialize()
+  }).done(response => {
+    if(response == "error"){
+      document.getElementById('search_poll_error_message').innerHTML = 'There was some error while searching';
+    }else {
+      var json_response = JSON.parse(response);
+      if(json_response.length == 0){
+        document.getElementById('search_poll_error_message').innerHTML = 'No Matching Search Results';
+      }
+      div_to_be_added =""
+      var search_results_div = document.getElementById('search_results');
+      for(i = 0 ; i < json_response.length ; i++){
+        new_div = '<div class="col card s12" style="border-radius:10px;"><p></p><a href=\"/'+json_response[i].ID+'\"><b>'
+        +json_response[i].heading+'</b></a><p>'
+        +json_response[i].description+'</p><p>'
+        +(json_response[i].option_1_votes+json_response[i].option_1_votes)
+        +' Votes</p></div>';
+
+        div_to_be_added += new_div;
+      }
+      search_results.innerHTML = div_to_be_added;
+    }
+  });
+}
+
+</script>
